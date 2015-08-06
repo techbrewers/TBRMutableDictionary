@@ -19,12 +19,35 @@
   });\
   return typedVariable;\
 
-#define ImplementMethod(method) method {\
+#define BASIC_METHOD_INVOCATION \
   NSMethodSignature *signature  = [self methodSignatureForSelector:_cmd];\
   NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];\
-  [invocation setTarget:self.mutableDictionary];\
   [invocation setSelector:_cmd];\
-  SYNC([invocation invoke]);\
+
+#define ImplementMethod(method) method {\
+  BASIC_METHOD_INVOCATION \
+  SYNC([invocation invokeWithTarget:self.mutableDictionary]);\
+}
+
+#define ImplementReturningMethodWithParameter(method, parameter) method parameter {\
+  BASIC_METHOD_INVOCATION \
+  [invocation setArgument:&parameter atIndex:2];\
+  __block id obj;\
+  dispatch_sync(self.synchronousQueue, ^{\
+    [invocation invokeWithTarget:self.mutableDictionary];\
+    [invocation getReturnValue:&obj];\
+  });\
+  return obj;\
+}
+
+#define ImplementReturningMethod(method, returnType) method {\
+  BASIC_METHOD_INVOCATION \
+  __block returnType obj;\
+  dispatch_sync(self.synchronousQueue, ^{\
+    [invocation invokeWithTarget:self.mutableDictionary];\
+    [invocation getReturnValue:&obj];\
+  });\
+  return obj;\
 }
 
 @interface TBRMutableDictionary ()
@@ -36,10 +59,12 @@
 
 #pragma mark - Method synchronization
 
-- (id)objectForKeyedSubscript:(id)key
-{
-  RETURN_OBJECT_SYNC([self.mutableDictionary objectForKeyedSubscript:key]);
-}
+ImplementReturningMethodWithParameter(- (id)objectForKeyedSubscript:(id), key)
+
+//- (id)objectForKeyedSubscript:(id)key
+//{
+//  RETURN_OBJECT_SYNC([self.mutableDictionary objectForKeyedSubscript:key]);
+//}
 
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key
 {
@@ -53,10 +78,12 @@ ImplementMethod(- (void)removeAllObjects);
 //  SYNC([self.mutableDictionary removeAllObjects]);
 //}
 
-- (NSUInteger)count
-{
-  RETURN_NSUInteger_SYNC([self.mutableDictionary count]);
-}
+ImplementReturningMethod(- (NSUInteger)count, NSUInteger)
+
+//- (NSUInteger)count
+//{
+//  RETURN_NSUInteger_SYNC([self.mutableDictionary count]);
+//}
 
 #pragma mark - Object lifecycle
 
