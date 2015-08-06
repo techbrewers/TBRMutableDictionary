@@ -19,6 +19,13 @@
   });\
   return typedVariable;\
 
+#define ImplementMethod(method) method {\
+  NSMethodSignature *signature  = [self methodSignatureForSelector:_cmd];\
+  NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];\
+  [invocation setTarget:self.mutableDictionary];\
+  [invocation setSelector:_cmd];\
+  SYNC([invocation invoke]);\
+}
 
 @interface TBRMutableDictionary ()
 @property (nonatomic, strong) NSMutableDictionary *mutableDictionary;
@@ -39,10 +46,12 @@
   SYNC([self.mutableDictionary setObject:obj forKeyedSubscript:key]);
 }
 
-- (void)removeAllObjects
-{
-  SYNC([self.mutableDictionary removeAllObjects]);
-}
+ImplementMethod(- (void)removeAllObjects);
+
+//- (void)removeAllObjects
+//{
+//  SYNC([self.mutableDictionary removeAllObjects]);
+//}
 
 - (NSUInteger)count
 {
