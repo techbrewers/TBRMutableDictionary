@@ -1,6 +1,6 @@
 #TBRMutableDictionary
 
-[![Build Status](https://travis-ci.org/techbrewers/TBRMutableDictionary.png)](https://travis-ci.org/techbrewers/TBRMutableDictionary.svg?branch=master)
+[![Build Status](https://travis-ci.org/techbrewers/TBRMutableDictionary.svg?branch=master)](https://travis-ci.org/techbrewers/TBRMutableDictionary.svg?branch=master)
 
 Thread safe mutable dictionary, it uses a NSMutableDictionary internally for storage and forwards some methods through a synchornous queue 
 
