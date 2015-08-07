@@ -27,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F042B241B74AA0C004A1925 /* TBRMutableCollectionMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBRMutableCollectionMacros.h; sourceTree = "<group>"; };
 		4F58EC381B73BC830019B771 /* TBRMutableDictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TBRMutableDictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F58EC3C1B73BC830019B771 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4F58EC3D1B73BC830019B771 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -122,6 +123,7 @@
 		4FBA4DC01B73E199000D52AB /* TBRMutableDictionary */ = {
 			isa = PBXGroup;
 			children = (
+				4F042B241B74AA0C004A1925 /* TBRMutableCollectionMacros.h */,
 				4FBA4DC11B73E199000D52AB /* TBRMutableDictionary.h */,
 				4FBA4DC21B73E199000D52AB /* TBRMutableDictionary.m */,
 			);

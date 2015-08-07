@@ -7,18 +7,10 @@
 //
 
 #import "TBRMutableDictionary.h"
+#import "TBRMutableCollectionMacros.h"
 
-#define SYNC(block) [self executeBlockOnSynchronousQueue:^{block;}];
-#define RETURN_OBJECT_SYNC(block) return [self executeObjectReturningBlockOnSynchronousQueue:^{return block;}];
-#define RETURN_NSUInteger_SYNC(block) return  [self executeNSUintegerReturningBlockOnSynchronousQueue:^{return block;}];
-
-#define dispatch_sync_with_return_type(type, synchronousQueue, returningBlock) \
-  __block type typedVariable;\
-  dispatch_sync(synchronousQueue, ^{\
-    typedVariable = returningBlock();\
-  });\
-  return typedVariable;\
-
+#define SYNC(block) dispatch_sync(self.synchronousQueue, ^{block;});
+#define RETURN_SYNC(returnType, block) dispatch_sync_with_return_type(returnType, self.synchronousQueue, ^returnType(void){return block;});
 
 @interface TBRMutableDictionary ()
 @property (nonatomic, strong) NSMutableDictionary *mutableDictionary;
@@ -31,7 +23,7 @@
 
 - (id)objectForKeyedSubscript:(id)key
 {
-  RETURN_OBJECT_SYNC([self.mutableDictionary objectForKeyedSubscript:key]);
+  RETURN_SYNC(id, [self.mutableDictionary objectForKeyedSubscript:key]);
 }
 
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key
@@ -46,7 +38,7 @@
 
 - (NSUInteger)count
 {
-  RETURN_NSUInteger_SYNC([self.mutableDictionary count]);
+  RETURN_SYNC(NSUInteger, [self.mutableDictionary count]);
 }
 
 #pragma mark - Object lifecycle
@@ -65,28 +57,7 @@
 
 - (NSString *)description
 {
-  __block NSString *description = nil;
-  dispatch_sync(self.synchronousQueue, ^{
-    description = self.mutableDictionary.description;
-  });
-  return description;
-}
-
-#pragma mark - Synchoronous execution blocks
-
-- (void)executeBlockOnSynchronousQueue:(void(^)(void))block
-{
-  dispatch_sync(self.synchronousQueue, block);
-}
-
-- (id)executeObjectReturningBlockOnSynchronousQueue:(id(^)(void))returningBlock
-{
-  dispatch_sync_with_return_type(id, self.synchronousQueue, returningBlock);
-}
-
-- (NSUInteger)executeNSUintegerReturningBlockOnSynchronousQueue:(NSUInteger(^)(void))returningBlock
-{
-  dispatch_sync_with_return_type(NSUInteger, self.synchronousQueue, returningBlock);
+  RETURN_SYNC(NSString *, self.mutableDictionary.description);
 }
 
 @end
